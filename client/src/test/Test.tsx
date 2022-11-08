@@ -33,6 +33,7 @@ const Test = () => {
       <div> role : {authStore?.role} </div>
       <div> nickname : {authStore?.nickname} </div>
       <div> accessToken : {store.getState().authStore.accessToken} </div>
+      <div>test</div>
     </Container>
   );
 };
