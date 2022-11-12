@@ -17,8 +17,8 @@ interface ILayoutProps {
 export default function Layout(props: ILayoutProps ){
   return(
      <Wrapper>
+      <Menus />
       <Main>
-        <Menus />
         <div>{props.children}</div>
       </Main>
     </Wrapper>  
