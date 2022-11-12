@@ -52,6 +52,14 @@ export default function MyService() {
                 <CardSubTitle>{el.content}</CardSubTitle>
                 <CardContext>내용</CardContext>
               </CardBox>
+              <CardBox>
+                <CardSubTitle>댓글</CardSubTitle>
+                <div>
+                  <CardContext>댓글1</CardContext>
+                  <CardContext>댓글2</CardContext>
+                  <CardContext>댓글3</CardContext>
+                </div>
+              </CardBox>
             </LeftCard>
           ))}
         </LeftSide>
@@ -149,7 +157,7 @@ export const RightSide = styled.div`
 `;
 
 export const LeftCard = styled.div`
-  height: 500px;
+  height: 400px;
   padding: 20px;
   border: 1px solid black;
   border-radius: 15px;
