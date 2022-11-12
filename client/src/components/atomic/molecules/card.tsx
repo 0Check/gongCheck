@@ -36,10 +36,14 @@ export const Wrapper = styled.div`
  flex-direction: column;
  justify-content: space-evenly;
  padding: 0px 20px;
- width: 30%;
+ width: 25%;
  height: 300px;
  border: 1px solid ${BORDER_COLOR};
+ margin-bottom: 50px;
  cursor: pointer;
+ @media (max-width: 412px) {
+  width: 100%;
+  }
  
 `;
 
