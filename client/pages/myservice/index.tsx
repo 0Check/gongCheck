@@ -1,53 +1,95 @@
 import styled from "@emotion/styled";
+import SearchIcon from "@mui/icons-material/Search";
+import CreateIcon from "@mui/icons-material/Create";
+import { useCallback, useState } from "react";
 
-export default function myService() {
+const data = [
+  { name: "1", title: "test1", who: "children1", content: "content1" },
+  { name: "2", title: "test2", who: "children2", content: "content2" },
+  { name: "3", title: "test3", who: "children3", content: "content3" },
+  { name: "4", title: "test4", who: "children4", content: "content4" },
+  { name: "5", title: "test5", who: "children5", content: "content5" },
+  { name: "6", title: "test6", who: "children6", content: "content6" },
+];
+
+export default function MyService() {
+  const [rightSide, setRightSide] = useState("");
+
+  const onClickCard = useCallback(
+    (e) => {
+      setRightSide(e.currentTarget.id);
+      console.log(rightSide);
+    },
+    [rightSide]
+  );
   return (
     <>
-      <div>나만의 공공서비스</div>
-      <SearchBar />
+      <SearchBox>
+        <SearchBar />
+        <SearchIcon
+          style={{ position: "relative", top: "60px", right: "40px" }}
+        />
+        <WriteButton>
+          <CreateIcon />
+          글쓰기
+        </WriteButton>
+      </SearchBox>
       <TitleDevideLine />
       <Page>
         <LeftSide>
-          <LeftCard>
-            <CardTitle>이러한 공공서비스가 생겼으면 좋겠습니다.</CardTitle>
-            <CardBox>
-              <CardSubTitle>작성자</CardSubTitle>
-              <CardContext>내용</CardContext>
-            </CardBox>
-            <CardBox>
-              <CardSubTitle>지원대상</CardSubTitle>
-              <CardContext>내용</CardContext>
-            </CardBox>
-            <CardBox>
-              <CardSubTitle>지원내용</CardSubTitle>
-              <CardContext>내용</CardContext>
-            </CardBox>
-          </LeftCard>
+          {data.map((el) => (
+            <LeftCard key={el.name} onClick={onClickCard} id={el.name}>
+              <CardTitle>{el.title}</CardTitle>
+              <CardBox>
+                <CardSubTitle>{el.name}</CardSubTitle>
+                <CardContext>{el.content}</CardContext>
+              </CardBox>
+              <CardBox>
+                <CardSubTitle>{el.who}</CardSubTitle>
+                <CardContext>내용</CardContext>
+              </CardBox>
+              <CardBox>
+                <CardSubTitle>{el.content}</CardSubTitle>
+                <CardContext>내용</CardContext>
+              </CardBox>
+            </LeftCard>
+          ))}
         </LeftSide>
         <CardDivideLine />
         <RightSide>
-          <RightCard>
-            <CardTitle>이러한 공공서비스가 생겼으면 좋겠습니다.</CardTitle>
-            <CardBox>
-              <CardSubTitle>작성자</CardSubTitle>
-              <CardContext>내용</CardContext>
-            </CardBox>
-            <CardBox>
-              <CardSubTitle>지원대상</CardSubTitle>
-              <CardContext>내용</CardContext>
-            </CardBox>
-            <CardBox>
-              <CardSubTitle>지원내용</CardSubTitle>
-              <CardContext>
-                공공서비스 지원 내용을 입력해주시면 됩니다.
-              </CardContext>
-            </CardBox>
-          </RightCard>
+          {rightSide ? (
+            data
+              .filter((el) => el.name == rightSide)
+              .map((el) => (
+                <RightCard key={el.name}>
+                  <CardTitle>{el.title}</CardTitle>
+                  <CardBox>
+                    <CardSubTitle>제목</CardSubTitle>
+                    <CardContext>{el.title}</CardContext>
+                  </CardBox>
+                  <CardBox>
+                    <CardSubTitle>지원대상</CardSubTitle>
+                    <CardContext>{el.who}</CardContext>
+                  </CardBox>
+                  <CardBox>
+                    <CardSubTitle>지원내용</CardSubTitle>
+                    <CardContext>{el.content}</CardContext>
+                  </CardBox>
+                </RightCard>
+              ))
+          ) : (
+            <div>자세한 정보가 여기 표기됩니다!</div>
+          )}
         </RightSide>
       </Page>
     </>
   );
 }
+
+export const SearchBox = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 
 export const SearchBar = styled.input`
   width: 85%;
@@ -57,13 +99,25 @@ export const SearchBar = styled.input`
   margin: 50px 0;
 `;
 
+export const WriteButton = styled.div`
+  width: 100px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 50px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const TitleDevideLine = styled.div`
   border: 1px solid black;
   margin: 0 0 50px 0;
 `;
 
 export const CardDivideLine = styled.div`
-  height: 100vh;
+  height: 80vh;
   border: 1px solid black;
 `;
 
@@ -73,13 +127,21 @@ export const Page = styled.div`
 `;
 
 export const LeftSide = styled.div`
-  width: 60em;
+  width: 600px;
+  height: 700px;
   display: flex;
   flex-direction: column;
   padding: 20px 40px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar-thumb {
+    background-color: #4167ee;
+  }
 `;
 
 export const RightSide = styled.div`
+  position: relative;
+  top: 0;
+  right: 0;
   width: 40em;
   display: flex;
   flex-direction: column;
@@ -87,11 +149,11 @@ export const RightSide = styled.div`
 `;
 
 export const LeftCard = styled.div`
-  width: 500px;
-  height: 300px;
+  height: 500px;
   padding: 20px;
   border: 1px solid black;
   border-radius: 15px;
+  margin-bottom: 20px;
 `;
 
 export const RightCard = styled.div`
