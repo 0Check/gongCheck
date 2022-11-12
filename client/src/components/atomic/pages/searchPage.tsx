@@ -1,6 +1,7 @@
 import { LINE_COLOR } from "../../../commons/color";
 import DivideLine from "../atoms/divideLine";
-import Card from "../molecules/card";
+
+import Cards from "../organisms/cards";
 import SearchNormal from "../organisms/searchNormal";
 
 export default function SearchPage(){
@@ -8,7 +9,7 @@ export default function SearchPage(){
     <>
       <SearchNormal />
       <DivideLine bgColor={LINE_COLOR} />
-      <Card />
+      <Cards />
     
     </>
   )
