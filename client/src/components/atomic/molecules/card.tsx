@@ -43,6 +43,7 @@ export const Wrapper = styled.div`
  cursor: pointer;
  @media (max-width: 412px) {
   width: 100%;
+  padding: 0px 0px;
   }
  
 `;
