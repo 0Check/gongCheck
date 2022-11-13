@@ -13,8 +13,16 @@ import { styled as muiStyled } from "@mui/material/styles";
  */
 
 interface ISignUpModalTypes {
-  IsOpen: boolean;
+  isOpenModal: boolean;
+  modalToggleHandler: () => void;
 }
+
+// 아래 2개는 바깥에서 선언을 해주고 props로 넣어주어야 한다.
+// const [isOpenModal, setIsOpenModal] = useState(props.IsOpen);
+
+// const modalToggleHandler = () => {
+//   setIsOpenModal((prev) => !prev);
+// };
 
 const SignUpModal = (props: ISignUpModalTypes) => {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -23,7 +31,6 @@ const SignUpModal = (props: ISignUpModalTypes) => {
   const [registerNickname, setRegisterNickname] = useState("");
   const [registerGender, setRegisterGender] = useState("");
   const [registerBirth, setRegisterBirth] = useState("");
-  const [isOpenModal, setIsOpenModal] = useState(props.IsOpen);
 
   const registerInputHandler = (setState: SetStateAction<any>) => (e: any) => {
     setState(e.currentTarget.value);
@@ -35,14 +42,10 @@ const SignUpModal = (props: ISignUpModalTypes) => {
 
   const signUpHandler = () => {};
 
-  const modalToggleHandler = () => {
-    setIsOpenModal((prev) => !prev);
-  };
-
   return (
     <Modal
-      open={isOpenModal}
-      onClose={modalToggleHandler}
+      open={props.isOpenModal}
+      onClose={props.modalToggleHandler}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -108,10 +111,7 @@ const SignUpModal = (props: ISignUpModalTypes) => {
           <Button variant="contained" onClick={() => signUpHandler}>
             회원가입하기
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => setIsOpenModal((prev) => !prev)}
-          >
+          <Button variant="contained" onClick={props.modalToggleHandler}>
             취소
           </Button>
         </SubmitButtonGroup>
