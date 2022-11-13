@@ -1,8 +1,11 @@
 import styled from "@emotion/styled";
 import { BOX_COLOR } from "../../../commons/color";
+import SimpleAccordion from "../atoms/acordion1";
 import IconBtn from "../atoms/button1";
 import Input1 from "../atoms/input1";
-import SearchDetailBtn from "../molecules/searchDetailBtn";
+
+import DetailMenus from "../molecules/searchDetailMenus";
+
 
 
 
@@ -10,22 +13,24 @@ import SearchDetailBtn from "../molecules/searchDetailBtn";
 export default function SearchNormal(){
   return(
     <Wrapper>
-      <Input1 />
-      <IconBtn />
-      <SearchDetailBtn/>
+      <SearchWrapper>
+        <Input1 />
+        <IconBtn />
+      </SearchWrapper>
+      < SimpleAccordion width="100%" title="상세검색" menus={<DetailMenus />} elevation="0"/>
     </Wrapper>
   )
 }
 
 export const Wrapper = styled.div`
+ width: 100%;
+ margin: 50px 0;
+`;
+export const SearchWrapper = styled.div`
  display: flex;
  flex-direction: row;
- justify-content: space-evenly;
+ justify-content: space-between;
  align-items: center;
- background-color: ${BOX_COLOR};
+ margin-bottom: 20px;
  width: 100%;
- height: 200px;
- margin: 50px 0;
- 
- 
 `;
