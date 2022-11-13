@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
-import { TextField } from "@material-ui/core";
+import { css } from "@emotion/css";
+import { Box, Modal, TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import { SetStateAction, useState } from "react";
+import { styled as muiStyled } from "@mui/material/styles";
 
 /**
  * Author : Sukyung Lee
@@ -8,43 +11,118 @@ import Button from "@material-ui/core/Button";
  * Date: 2022-11-12 03:05:04
  * Description :
  */
-const SignUpModal = () => {
+
+interface ISignUpModalTypes {
+  IsOpen: boolean;
+}
+
+const SignUpModal = (props: ISignUpModalTypes) => {
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerCheckPassword, setRegisterCheckPassword] = useState("");
+  const [registerNickname, setRegisterNickname] = useState("");
+  const [registerGender, setRegisterGender] = useState("");
+  const [registerBirth, setRegisterBirth] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(props.IsOpen);
+
+  const registerInputHandler = (setState: SetStateAction<any>) => (e: any) => {
+    setState(e.currentTarget.value);
+  };
+  const registerGenderChangeHandler =
+    (setState: SetStateAction<any>, value: string) => (e: any) => {
+      setState(value);
+    };
+
+  const signUpHandler = () => {};
+
+  const modalToggleHandler = () => {
+    setIsOpenModal((prev) => !prev);
+  };
+
   return (
-    <Container>
-      <Title> 회원가입 </Title>
+    <Modal
+      open={isOpenModal}
+      onClose={modalToggleHandler}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
       <Main>
-        <TextField label="이메일" type="email" variant="outlined" />
+        <Title> 회원가입 </Title>
+        <TextField
+          label="이메일"
+          type="email"
+          variant="outlined"
+          onChange={registerInputHandler(setRegisterEmail)}
+        />
         <TextField
           label="비밀번호"
           type="password"
           variant="outlined"
           autoComplete="current-password"
+          onChange={registerInputHandler(setRegisterPassword)}
         />
-        <TextField label="비밀번호 확인" type="password" variant="outlined" />
-        <TextField label="닉네임" type="text" variant="outlined" />
-        <TextField label="성별" type="text" variant="outlined" />
-        <TextField label="생년월일" type="text" variant="outlined" />
-        <ButtonGroup>
-          <Button variant="contained">회원가입하기</Button>
-          <Button variant="contained">취소</Button>
-        </ButtonGroup>
+        <TextField
+          label="비밀번호 확인"
+          type="password"
+          variant="outlined"
+          autoComplete="current-password"
+          onChange={registerInputHandler(setRegisterCheckPassword)}
+        />
+        <TextField
+          label="닉네임"
+          type="text"
+          variant="outlined"
+          onChange={registerInputHandler(setRegisterNickname)}
+        />
+        <GenderGroup>
+          <GenderButton
+            variant="outlined"
+            onClick={registerGenderChangeHandler(setRegisterGender, "man")}
+            style={
+              registerGender === "man"
+                ? { backgroundColor: "#5999F1", boxShadow: "1px 1px 0px 0px" }
+                : {}
+            }
+          >
+            남성
+          </GenderButton>
+          <GenderButton
+            variant="outlined"
+            onClick={registerGenderChangeHandler(setRegisterGender, "woman")}
+            style={
+              registerGender === "woman"
+                ? { backgroundColor: "#5999F1", boxShadow: "1px 1px 0px 0px" }
+                : {}
+            }
+          >
+            여성
+          </GenderButton>
+        </GenderGroup>
+        <TextField
+          label="생년월일"
+          type="text"
+          variant="outlined"
+          onChange={registerInputHandler(setRegisterBirth)}
+        />
+        <SubmitButtonGroup>
+          <Button variant="contained" onClick={() => signUpHandler}>
+            회원가입하기
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => setIsOpenModal((prev) => !prev)}
+          >
+            취소
+          </Button>
+        </SubmitButtonGroup>
       </Main>
-    </Container>
+    </Modal>
   );
 };
 export default SignUpModal;
-const Container = styled.div`
-  width: 320px;
-  border: solid black 1px;
-  position: fixed;
-  left: 50%;
-  transform: translate(-50%, 100px);
-  z-index: 30;
-`;
-
 const Title = styled.div`
   width: 100%;
-  height: 60px;
+  min-height: 60px;
   background-color: #6a94cd;
   font-size: 26px;
   display: flex;
@@ -57,8 +135,15 @@ const Main = styled.div`
   display: flex;
   flex-flow: nowrap column;
   gap: 20px;
+  width: 400px;
+  max-height: calc(100% - 150px);
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 100px);
+  background: white;
+  overflow: scroll;
 `;
-const ButtonGroup = styled.div`
+const SubmitButtonGroup = styled.div`
   display: flex;
   gap: 20px;
 
@@ -66,10 +151,19 @@ const ButtonGroup = styled.div`
     width: 100%;
     color: white;
   }
-  button:nth-child(1) {
+  button:nth-of-type(1) {
     background: #6a94cd;
   }
-  button:nth-child(2) {
+  button:nth-of-type(2) {
     background: #aeaeae;
   }
+`;
+
+const GenderGroup = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+
+const GenderButton = styled(Button)`
+  width: 100%;
 `;
