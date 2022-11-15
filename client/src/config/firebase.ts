@@ -13,6 +13,6 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
-export const firebaseAuthService = getAuth(firebaseApp);
+export const firebaseAuthService = getAuth();
 export const firebaseDbService = getFirestore();
 export const firebaseRealtimeDbService = getDatabase();

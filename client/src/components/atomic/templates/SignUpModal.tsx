@@ -4,6 +4,9 @@ import { Box, Modal, TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { SetStateAction, useState } from "react";
 import { styled as muiStyled } from "@mui/material/styles";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { firebaseAuthService, firebaseApp } from "../../../config/firebase";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 
 /**
  * Author : Sukyung Lee
@@ -40,7 +43,31 @@ const SignUpModal = (props: ISignUpModalTypes) => {
       setState(value);
     };
 
-  const signUpHandler = () => {};
+  const signUpHandler = async () => {
+    await createUserWithEmailAndPassword(
+      firebaseAuthService,
+      registerEmail,
+      registerPassword
+    )
+      .then((result) => {
+        const userObj = {
+          email: result.user.email,
+          displayName: registerNickname,
+          gender: registerGender,
+          birth: registerBirth,
+          photoURL: "",
+        };
+        const db = getFirestore(firebaseApp);
+        const userRef = doc(db, "user", result.user.uid);
+        setDoc(userRef, userObj);
+        alert("회원가입이 되었습니다.");
+        props.modalToggleHandler();
+      })
+      .catch((error) => {
+        console.log("SignUpModal.tsx : ", error.code);
+        console.log("SignUpModal.tsx : ", error.message);
+      });
+  };
 
   return (
     <Modal
@@ -108,7 +135,7 @@ const SignUpModal = (props: ISignUpModalTypes) => {
           onChange={registerInputHandler(setRegisterBirth)}
         />
         <SubmitButtonGroup>
-          <Button variant="contained" onClick={() => signUpHandler}>
+          <Button variant="contained" onClick={signUpHandler}>
             회원가입하기
           </Button>
           <Button variant="contained" onClick={props.modalToggleHandler}>

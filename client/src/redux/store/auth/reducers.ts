@@ -4,18 +4,20 @@ import * as actions from "./actions";
 import { setUserInfo, setAccessToken } from "./actions";
 
 type initialStateType = {
+  uid: string;
   email: string;
-  role: string;
-  nickname: string;
-  accessToken: string;
+  displayName: string;
+  gender: string;
+  birth: string;
 };
 
 // 리듀서 역할 1 : state를 정의한다. 실제 사용한 state값들
 const initialState: initialStateType = {
+  uid: "",
   email: "",
-  role: "",
-  nickname: "",
-  accessToken: "",
+  displayName: "",
+  gender: "",
+  birth: "",
 };
 
 // 리듀서 역할 2 : state를 변경시키는 함수를 정의한다.
@@ -25,9 +27,11 @@ export const authReducer = (state = initialState, action: any) => {
     case "SET_USER_INFO":
       return {
         ...state,
+        uid: action.payload.uid,
         email: action.payload.email,
-        role: action.payload.role,
-        nickname: action.payload.nickname,
+        displayName: action.payload.displayName,
+        gender: action.payload.gender,
+        birth: action.payload.birth,
       };
     case "SET_ACCESS_TOKEN":
       return {
