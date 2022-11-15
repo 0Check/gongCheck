@@ -5,41 +5,68 @@ import { Accordion, AccordionDetails, AccordionSummary, makeStyles, Typography }
 import { ThemeProvider } from "@emotion/react";
 import theme from "../../../../styles/theme";
 
-
-
-export const useStyles = makeStyles((theme: any) => ({
+interface ISimpleAccordionProps {
+  width: string,
+  border: string,
+  title: string,
+  height: string,
+  menus: JSX.Element
+}
+// export const useStyles = makeStyles((theme: any)
+export const useStyles = makeStyles(() => ({
   detailRoot: {
-    display: "block"
+    display: "block",
+    '& .MuiCollapse-entered': {
+      overflow: "auto",
+    },   
   },
   root: {
     '& .Mui-expanded': {
       margin: "0px"
     },
     position: "unset",  
+  },
+  summary: {
+    
   }
 }));
 
-export default function SimpleAccordion(props: any) {
+
+export default function SimpleAccordion(props: ISimpleAccordionProps) {
   const classes = useStyles();
   return (
-    <ThemeProvider theme={theme}>
-      <AccordionWrapper width={props.width} elevation={props.elevation} classes={{ root: classes.root }}>
+    // <ThemeProvider theme={theme}>
+      <AccordionWrapper 
+        width={props.width}
+        border={props.border} 
+        elevation={0}
+        classes={{ root: classes.root }}
+        >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
+          
         >
           <Typography>{props.title}</Typography>
         </AccordionSummary>
-        <AccordionDetails  classes={{ root: classes.detailRoot }}>
+        <AccordionWrappers height={props.height}  classes={{ root: classes.detailRoot }}>
           <Typography>{props.menus}</Typography>
-        </AccordionDetails>
+        </AccordionWrappers>
       </AccordionWrapper>
-    </ThemeProvider>
+    // </ThemeProvider>
   );
 }
-export const AccordionWrapper = styled(Accordion)<{width: string}>`
+export const AccordionWrapper = styled(Accordion)<{width: string, border: string}>`
   width: ${(props)=>props.width}; 
+  border: ${(props)=>props.border}; 
+ 
 `
+export const AccordionWrappers = styled(AccordionDetails)<{height: string}>`
+  height: ${(props)=>props.height}; 
+ 
+`
+
+
 
 

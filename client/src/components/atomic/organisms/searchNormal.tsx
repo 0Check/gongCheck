@@ -17,7 +17,7 @@ export default function SearchNormal(){
         <Input1 />
         <IconBtn />
       </SearchWrapper>
-      < SimpleAccordion width="100%" title="상세검색" menus={<DetailMenus />} elevation="0"/>
+      < SimpleAccordion width="100%" height="auto" border="none" title="상세검색" menus={<DetailMenus />} />
     </Wrapper>
   )
 }
