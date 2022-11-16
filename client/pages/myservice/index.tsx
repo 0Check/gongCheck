@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import SearchIcon from "@mui/icons-material/Search";
 import CreateIcon from "@mui/icons-material/Create";
 import { useCallback, useState } from "react";
+import CommentContainer from "../../src/components/atomic/templates/commentContainer";
 
 const data = [
   { name: "1", title: "test1", who: "children1", content: "content1" },
@@ -83,10 +84,13 @@ export default function MyService() {
                     <CardSubTitle>지원내용</CardSubTitle>
                     <CardContext>{el.content}</CardContext>
                   </CardBox>
+                  <CommentContainer />
                 </RightCard>
               ))
           ) : (
-            <div>자세한 정보가 여기 표기됩니다!</div>
+            <div>
+              <div> 자세한 정보가 여기 표기됩니다! </div>
+            </div>
           )}
         </RightSide>
       </Page>
