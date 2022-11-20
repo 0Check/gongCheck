@@ -1,49 +1,65 @@
 import styled from "@emotion/styled";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
+import { dateFormat4y2m2d2h2m } from "../../../commons/function/dateFormat";
 /**
  * Author : Sukyung Lee
  * FileName: comment.tsx
  * Date: 2022-11-16 20:21:38
  * Description :
  */
-const defaultText =
-  "이런 말풍선모양의 컴포넌트 어떤가요? 이런 말풍선모양의 컴포넌트 어떤가요? 이런 말풍선모양의 컴포넌트 어떤가요? 이런 말풍선모양의 컴포넌트 어떤가요? 이런 말풍선모양의 컴포넌트 어떤가요? 이런 말풍선모양의 컴포넌트 어떤가요? ";
 
-const Comment = () => {
+interface ICommentProps {
+  data: {
+    uid: string;
+    writer: string;
+    createdAt: {
+      seconds: number;
+      nanoseconds: number;
+    };
+    boardId: string;
+    content: string;
+  };
+  removeCommentHandler: (uid: string) => void;
+  editCommentHandler: (uid: string, editCommentText: string) => void;
+}
+
+const Comment = (props: ICommentProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [editCommentText, setEditCommentText] = useState(defaultText);
+  const [editCommentText, setEditCommentText] = useState(props.data.content);
   const [textareaHeight, setTextareaHeight] = useState(0);
   const textareaRef = useRef<any>();
 
   const closeEditCommentHandler = () => {
-    console.log("comment.tsx : ", "댓글 수정 종료");
-    console.log("comment.tsx : ", textareaRef.current?.scrollHeight);
-    setEditCommentText(defaultText);
+    setEditCommentText(props.data.content);
     setIsEdit(false);
-  };
-
-  const editCommentHandler = () => {
-    console.log("comment.tsx : ", "댓글 수정");
   };
 
   const openEditCommentHandler = async () => {
     await setIsEdit(true);
-    // await setTextareaHeight(textareaRef.current?.scrollHeight - 4);
+    // padding값이 변할 경우 "scrollHeight-패딩간격"을 해주어야 한다.
     await setTextareaHeight(textareaRef.current?.scrollHeight);
   };
 
-  const removeCommentHandler = () => {
-    console.log("comment.tsx : ", "댓글 삭제");
+  //
+  const editCommentHandler = () => {
+    props.editCommentHandler(props.data.uid, editCommentText);
+    setIsEdit(false);
+    alert("댓글이 수정되었습니다.");
   };
 
   return (
     <Wrapper>
       <CommentBalloon>
-        <DisplayName> 코딩하는 공룡 </DisplayName>
+        <DisplayName>
+          <span> {props.data.writer} </span>
+          <span>
+            {dateFormat4y2m2d2h2m(props.data?.createdAt?.seconds * 1000)}{" "}
+          </span>
+        </DisplayName>
         {isEdit ? (
           <textarea
             ref={textareaRef}
@@ -59,7 +75,7 @@ const Comment = () => {
             onChange={(e: any) => setEditCommentText(e.target.value)}
           />
         ) : (
-          <div>{defaultText}</div>
+          <div>{props.data.content}</div>
         )}
       </CommentBalloon>
       {isEdit ? (
@@ -70,7 +86,9 @@ const Comment = () => {
       ) : (
         <CommentButtonGroup>
           <EditOutlinedIconStyle onClick={openEditCommentHandler} />
-          <DeleteIconStyle onClick={removeCommentHandler} />
+          <DeleteIconStyle
+            onClick={() => props.removeCommentHandler(props.data.uid)}
+          />
         </CommentButtonGroup>
       )}
     </Wrapper>
@@ -84,7 +102,7 @@ const Wrapper = styled.div`
 `;
 const CommentBalloon = styled.div`
   background-color: #efefef;
-  padding: 10px 30px 10px 10px;
+  padding: 10px 10px 10px 10px;
   display: flex;
   flex-flow: nowrap column;
   gap: 12px;
@@ -93,10 +111,10 @@ const CommentBalloon = styled.div`
   position: relative;
 
   &::before {
-    --border-value: 24px;
+    --border-value: 20px;
     content: "";
     position: absolute;
-    right: -24px;
+    right: -20px;
     top: 16;
     width: 0;
     height: 0;
@@ -107,8 +125,19 @@ const CommentBalloon = styled.div`
   }
 `;
 
-const DisplayName = styled.span`
-  font-weight: 800;
+const DisplayName = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border-bottom: solid #aeaeae 1px;
+  padding-bottom: 2px;
+
+  & > span:nth-of-type(1) {
+    font-weight: 800;
+  }
+  & > span:nth-of-type(2) {
+    font-size: 12px;
+    z-index: 10;
+  }
 `;
 const CommentButtonGroup = styled.div`
   display: flex;
