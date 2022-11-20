@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { TextField } from "@material-ui/core";
 import Comment from "../molecules/comment";
 import SendIcon from "@mui/icons-material/Send";
 import { useState, useEffect, KeyboardEvent } from "react";
@@ -15,9 +14,12 @@ import {
   updateDoc,
   where,
   query,
+  orderBy,
 } from "firebase/firestore";
 import { firebaseDbService } from "../../../config/firebase";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store/reducers";
 /**
  * Author : Sukyung Lee
  * FileName: commentContainer.tsx
@@ -30,8 +32,9 @@ interface ICommentContainerTypes {
 }
 
 const CommentContainer = (props: ICommentContainerTypes) => {
-  const [inputAddComment, setInputAddComment] = useState("");
+  const [commentInputValue, setCommentInputValue] = useState("");
   const [commentListDocs, setCommentListDocs] = useState<any>();
+  const authStore = useSelector((state: RootState) => state.authStore);
 
   const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -41,15 +44,15 @@ const CommentContainer = (props: ICommentContainerTypes) => {
 
   // [Create] 댓글 추가하기
   const addCommentHandler = async () => {
-    if (inputAddComment === "") return;
+    if (commentInputValue === "") return;
     const addBoard = await addDoc(collection(firebaseDbService, "comment"), {
       boardId: "아직 게시글ID가 없음",
       writer: store.getState().authStore.displayName,
-      content: inputAddComment,
+      content: commentInputValue,
       createdAt: serverTimestamp(),
     })
       .then((result) => {
-        setInputAddComment("");
+        setCommentInputValue("");
         getCommentList();
       })
       .catch((err) => {
@@ -59,12 +62,12 @@ const CommentContainer = (props: ICommentContainerTypes) => {
 
   // [Read] 댓글 리스트 조회하기
   const getCommentList = async () => {
-    const getCommentsQuery = query(
+    const q = query(
       collection(firebaseDbService, "comment"),
+      orderBy("createdAt", "desc"),
       where("boardId", "==", "아직 게시글ID가 없음")
     );
-
-    await getDocs(getCommentsQuery)
+    await getDocs(q)
       .then((result) => {
         setCommentListDocs(
           result.docs.map((i) => {
@@ -82,6 +85,7 @@ const CommentContainer = (props: ICommentContainerTypes) => {
     const editCommentRef = doc(firebaseDbService, "comment", uid);
     const getEditCommentRef = await getDoc(editCommentRef);
     const getEditCommentData = await getEditCommentRef.data();
+
     await updateDoc(editCommentRef, {
       ...getEditCommentData,
       content: editCommentText,
@@ -130,19 +134,21 @@ const CommentContainer = (props: ICommentContainerTypes) => {
           />
         ))}
       </CommentBody>
-      <FlexColumnDiv>
-        <span> 닉네임 : {store.getState().authStore.displayName} </span>
-        <FlexRowDiv>
-          <Input
-            onChange={(e: any) => {
-              setInputAddComment(e.target.value);
-            }}
-            value={inputAddComment}
-            onKeyPress={onKeyPressHandler}
-          />
-          <SendIconStyle onClick={addCommentHandler} />
-        </FlexRowDiv>
-      </FlexColumnDiv>
+      {authStore.displayName && (
+        <FlexColumnDiv>
+          <span> 닉네임 : {authStore.displayName} </span>
+          <FlexRowDiv>
+            <Input
+              onChange={(e: any) => {
+                setCommentInputValue(e.target.value);
+              }}
+              value={commentInputValue}
+              onKeyPress={onKeyPressHandler}
+            />
+            <SendIconStyle onClick={addCommentHandler} />
+          </FlexRowDiv>
+        </FlexColumnDiv>
+      )}
     </Wrapper>
   );
 };
