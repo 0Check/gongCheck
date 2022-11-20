@@ -5,8 +5,14 @@ import Button from "@material-ui/core/Button";
 import { SetStateAction, useState } from "react";
 import { styled as muiStyled } from "@mui/material/styles";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { firebaseAuthService, firebaseApp } from "../../../config/firebase";
+import {
+  firebaseAuthService,
+  firebaseApp,
+  firebaseDbService,
+} from "../../../config/firebase";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { store } from "../../../redux/store";
+import { setUserInfo } from "../../../redux/store/auth";
 
 /**
  * Author : Sukyung Lee
@@ -57,8 +63,7 @@ const SignUpModal = (props: ISignUpModalTypes) => {
           birth: registerBirth,
           photoURL: "",
         };
-        const db = getFirestore(firebaseApp);
-        const userRef = doc(db, "user", result.user.uid);
+        const userRef = doc(firebaseDbService, "user", result.user.uid);
         setDoc(userRef, userObj);
         alert("회원가입이 되었습니다.");
         props.modalToggleHandler();
