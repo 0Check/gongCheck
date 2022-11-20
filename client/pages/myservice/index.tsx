@@ -170,7 +170,7 @@ export const LeftCard = styled.div`
 
 export const RightCard = styled.div`
   width: 500px;
-  height: 600px;
+  min-height: 600px;
   padding: 20px;
   border: 2px solid black;
   border-radius: 15px;
