@@ -17,7 +17,7 @@ export const getServiceList = async (pageNum: number) => {
     collection(db, "serviceList"),
     orderBy("서비스ID"),
     startAt(pageNum),
-    limit(10)
+    limit(12)
   );
 
   const docSnap = await getDocs(listDB);
@@ -25,8 +25,6 @@ export const getServiceList = async (pageNum: number) => {
   docSnap.docs.map((el) => {
     arr.push(el.data());
   });
-
-  console.log(arr);
 
   return arr;
 };
