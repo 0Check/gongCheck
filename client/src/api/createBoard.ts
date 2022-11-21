@@ -17,5 +17,7 @@ export const createBoard = async (title: string, contents: string) => {
       반대: [0, 0],
       user: store.getState().authStore.uid,
     });
+  } else {
+    alert("로그인이 필요합니다");
   }
 };
