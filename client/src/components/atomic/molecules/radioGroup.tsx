@@ -46,6 +46,7 @@ export default function RadioButtonsGroup(props: any) {
     }
     
     console.log(store.getState().searchConditionStore);
+    console.log(store.getState().searchConditionStore);
   }
 
  
