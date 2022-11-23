@@ -13,9 +13,12 @@ export const createBoard = async (title: string, contents: string) => {
       title: title,
       contents: contents,
       createdAt: today.toLocaleString(),
-      찬성: [0, 0],
-      반대: [0, 0],
+      agreeGender: [0, 0],
+      oppositeGender: [0, 0],
+      agreeAge: [0, 0, 0, 0, 0, 0],
+      oppositeAge: [0, 0, 0, 0, 0, 0],
       user: store.getState().authStore.uid,
+      votedUser: [],
     });
   } else {
     alert("로그인이 필요합니다");
