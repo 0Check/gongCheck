@@ -11,6 +11,7 @@ type initialStateType = {
   birth: string;
 };
 
+
 // 리듀서 역할 1 : state를 정의한다. 실제 사용한 state값들
 const initialState: initialStateType = {
   uid: "",

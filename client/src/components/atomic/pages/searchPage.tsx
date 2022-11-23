@@ -11,11 +11,7 @@ export default function SearchPage(){
     <>
       <SearchNormal />
       <DivideLine bgColor={LINE_COLOR} />
-  
       <Cards />
-     
-      
-    
     </>
   )
 }
