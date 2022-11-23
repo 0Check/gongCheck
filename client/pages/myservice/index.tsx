@@ -3,6 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CreateIcon from "@mui/icons-material/Create";
 import { useCallback, useState } from "react";
 import CommentContainer from "../../src/components/atomic/templates/commentContainer";
+import ChartExample from "../detail/chart";
 
 const data = [
   { name: "1", title: "test1", who: "children1", content: "content1" },
@@ -15,14 +16,19 @@ const data = [
 
 export default function MyService() {
   const [rightSide, setRightSide] = useState("");
+  const [content, setContent] = useState("content");
 
   const onClickCard = useCallback(
     (e) => {
       setRightSide(e.currentTarget.id);
+      setContent("content");
       console.log(rightSide);
     },
     [rightSide]
   );
+  const changeContent = useCallback((e) => {
+    setContent(e.target.id);
+  }, []);
   return (
     <>
       <SearchBox>
@@ -66,11 +72,17 @@ export default function MyService() {
         </LeftSide>
         <CardDivideLine />
         <RightSide>
-          {rightSide ? (
+          {rightSide && content == "content" ? (
             data
               .filter((el) => el.name == rightSide)
               .map((el) => (
                 <RightCard key={el.name}>
+                  <button id="content" onClick={changeContent}>
+                    내용
+                  </button>
+                  <button id="graph" onClick={changeContent}>
+                    그래프
+                  </button>
                   <CardTitle>{el.title}</CardTitle>
                   <CardBox>
                     <CardSubTitle>제목</CardSubTitle>
@@ -88,9 +100,15 @@ export default function MyService() {
                 </RightCard>
               ))
           ) : (
-            <div>
-              <div> 자세한 정보가 여기 표기됩니다! </div>
-            </div>
+            <>
+              <button id="content" onClick={changeContent}>
+                내용
+              </button>
+              <button id="graph" onClick={changeContent}>
+                그래프
+              </button>
+              <ChartExample />
+            </>
           )}
         </RightSide>
       </Page>
