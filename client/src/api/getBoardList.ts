@@ -11,11 +11,11 @@ import {
 
 const db = getFirestore(firebaseApp);
 
-export const getServiceList = async (pageNum: number) => {
+export const getBoardList = async (pageNum: number) => {
   let arr: any[] = [];
   const listDB = query(
-    collection(db, "serviceList"),
-    orderBy("서비스ID"),
+    collection(db, "board"),
+    orderBy("createdAt"),
     startAt(pageNum),
     limit(12)
   );
