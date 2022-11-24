@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { dateFormat4y2m2d2h2m } from "../../../commons/function/dateFormat";
+import { onKeyPressHandler } from "../../../commons/function/event/keyboardEvent";
+import { store } from "../../../redux/store";
 /**
  * Author : Sukyung Lee
  * FileName: comment.tsx
@@ -24,17 +26,19 @@ interface ICommentProps {
     content: string;
   };
   removeCommentHandler: (uid: string) => void;
-  editCommentHandler: (uid: string, editCommentText: string) => void;
+  updateCommentHandler: (uid: string, updateCommentText: string) => void;
 }
 
 const Comment = (props: ICommentProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [editCommentText, setEditCommentText] = useState(props.data.content);
+  const [updateCommentText, setUpdateCommentText] = useState(
+    props.data.content
+  );
   const [textareaHeight, setTextareaHeight] = useState(0);
   const textareaRef = useRef<any>();
 
   const closeEditCommentHandler = () => {
-    setEditCommentText(props.data.content);
+    setUpdateCommentText(props.data.content);
     setIsEdit(false);
   };
 
@@ -45,8 +49,8 @@ const Comment = (props: ICommentProps) => {
   };
 
   //
-  const editCommentHandler = () => {
-    props.editCommentHandler(props.data.uid, editCommentText);
+  const updateCommentHandler = async () => {
+    await props.updateCommentHandler(props.data.uid, updateCommentText);
     setIsEdit(false);
     alert("댓글이 수정되었습니다.");
   };
@@ -71,8 +75,9 @@ const Comment = (props: ICommentProps) => {
               border: "none",
               padding: "0px",
             }}
-            value={editCommentText}
-            onChange={(e: any) => setEditCommentText(e.target.value)}
+            value={updateCommentText}
+            onChange={(e: any) => setUpdateCommentText(e.target.value)}
+            onKeyPress={onKeyPressHandler(() => updateCommentHandler())}
           />
         ) : (
           <div>{props.data.content}</div>
@@ -81,14 +86,18 @@ const Comment = (props: ICommentProps) => {
       {isEdit ? (
         <CommentButtonGroup>
           <CloseIconStyle onClick={closeEditCommentHandler} />
-          <SendIconStyle onClick={editCommentHandler} />
+          <SendIconStyle onClick={updateCommentHandler} />
         </CommentButtonGroup>
       ) : (
         <CommentButtonGroup>
-          <EditOutlinedIconStyle onClick={openEditCommentHandler} />
-          <DeleteIconStyle
-            onClick={() => props.removeCommentHandler(props.data.uid)}
-          />
+          {props.data.writer === store.getState().authStore.displayName && (
+            <>
+              <EditOutlinedIconStyle onClick={openEditCommentHandler} />
+              <DeleteIconStyle
+                onClick={() => props.removeCommentHandler(props.data.uid)}
+              />
+            </>
+          )}
         </CommentButtonGroup>
       )}
     </Wrapper>
@@ -140,6 +149,7 @@ const DisplayName = styled.div`
   }
 `;
 const CommentButtonGroup = styled.div`
+  width: 30px;
   display: flex;
   flex-flow: nowrap column;
   gap: 12px;

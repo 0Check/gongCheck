@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Comment from "../molecules/comment";
 import SendIcon from "@mui/icons-material/Send";
-import { useState, useEffect, KeyboardEvent } from "react";
+import { useState, useEffect, KeyboardEvent, SetStateAction } from "react";
 import { store } from "../../../redux/store";
 import {
   addDoc,
@@ -20,6 +20,14 @@ import { firebaseDbService } from "../../../config/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store/reducers";
+import {
+  addComment,
+  deleteComment,
+  getCommentList,
+  updateComment,
+} from "../../../api/commentApiService";
+import { onKeyPressHandler } from "../../../commons/function/event/keyboardEvent";
+
 /**
  * Author : Sukyung Lee
  * FileName: commentContainer.tsx
@@ -31,106 +39,105 @@ interface ICommentContainerTypes {
   boardId?: string;
 }
 
+type commentListType = {
+  uid?: String;
+  boardId?: String;
+  content?: String;
+  createdAt?: {
+    seconds: number;
+    nanoseconds: number;
+  };
+  writer?: String;
+};
+
 const CommentContainer = (props: ICommentContainerTypes) => {
   const [commentInputValue, setCommentInputValue] = useState("");
-  const [commentListDocs, setCommentListDocs] = useState<any>();
+  const [commentList, setCommentList] = useState<commentListType[]>();
   const authStore = useSelector((state: RootState) => state.authStore);
 
-  const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      addCommentHandler();
+  // [Create] 댓글 추가하기
+  const addCommentHandler = async (
+    commentInputValue: string,
+    commentList: Array<commentListType> | undefined
+  ) => {
+    if (commentInputValue !== undefined) {
+      addComment(commentInputValue, commentList)
+        .then((result) => {
+          setCommentInputValue("");
+          getCommentListHandler();
+        })
+        .catch((err) => {
+          alert("댓글 추가하기 중 에러 발생");
+        });
     }
   };
 
-  // [Create] 댓글 추가하기
-  const addCommentHandler = async () => {
-    if (commentInputValue === "") return;
-    const addBoard = await addDoc(collection(firebaseDbService, "comment"), {
-      boardId: "아직 게시글ID가 없음",
-      writer: store.getState().authStore.displayName,
-      content: commentInputValue,
-      createdAt: serverTimestamp(),
-    })
-      .then((result) => {
-        setCommentInputValue("");
-        getCommentList();
-      })
-      .catch((err) => {
-        console.log("commentContainer.tsx : ", err);
-      });
-  };
-
   // [Read] 댓글 리스트 조회하기
-  const getCommentList = async () => {
-    const q = query(
-      collection(firebaseDbService, "comment"),
-      orderBy("createdAt", "desc"),
-      where("boardId", "==", "아직 게시글ID가 없음")
-    );
-    await getDocs(q)
-      .then((result) => {
-        setCommentListDocs(
+  const getCommentListHandler = async () => {
+    getCommentList()
+      .then(async (result) => {
+        await setCommentList(
           result.docs.map((i) => {
             return { uid: i.id, ...i.data() };
           })
         );
       })
       .catch((err) => {
-        console.log("commentContainer.tsx : ", "댓글 리스트 조회 중 에러 발생");
+        alert("댓글 리스트 조회 중 에러 발생");
       });
   };
 
   // [Update] 댓글 수정하기
-  const editCommentHandler = async (uid: string, editCommentText: string) => {
-    const editCommentRef = doc(firebaseDbService, "comment", uid);
-    const getEditCommentRef = await getDoc(editCommentRef);
-    const getEditCommentData = await getEditCommentRef.data();
-
-    await updateDoc(editCommentRef, {
-      ...getEditCommentData,
-      content: editCommentText,
-    })
+  const updateCommentHandler = async (
+    uid: string,
+    updateCommentText: string
+  ) => {
+    await updateComment(uid, updateCommentText)
       .then((result) => {
-        setCommentListDocs(
-          commentListDocs.map((i: any) =>
+        setCommentList(
+          commentList?.map((i: any) =>
             i.uid !== uid
               ? i
               : {
                   ...i,
-                  content: editCommentText,
+                  content: updateCommentText,
                 }
           )
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        alert("댓글 수정 중 에러 발생");
+      });
   };
 
   // [Delete] 댓글 삭제하기
   const removeCommentHandler = async (uid: string) => {
-    await deleteDoc(doc(firebaseDbService, "comment", uid))
+    deleteComment(uid)
       .then((result) => {
         alert("댓글이 삭제되었습니다.");
-        setCommentListDocs(
-          commentListDocs.filter((el: any) => el.uid !== uid).map((i: any) => i)
+        setCommentList(
+          commentList?.filter((el: any) => el.uid !== uid).map((i: any) => i)
         );
       })
-      .catch((err) => {});
+      .catch((err) => {
+        alert("댓글 삭제 중 에러 발생");
+      });
   };
 
   useEffect(() => {
-    getCommentList();
+    getCommentListHandler();
   }, []);
 
   return (
     <Wrapper>
-      <CommentCount> 댓글 {commentListDocs?.length} </CommentCount>
+      <CommentCount> 댓글 {commentList?.length} </CommentCount>
       <CommentBody>
-        {commentListDocs?.map((i: any) => (
+        {commentList?.map((i: any) => (
           <Comment
             key={uuidv4()}
             data={i}
             removeCommentHandler={removeCommentHandler}
-            editCommentHandler={editCommentHandler}
+            updateCommentHandler={updateCommentHandler}
           />
         ))}
       </CommentBody>
@@ -143,9 +150,13 @@ const CommentContainer = (props: ICommentContainerTypes) => {
                 setCommentInputValue(e.target.value);
               }}
               value={commentInputValue}
-              onKeyPress={onKeyPressHandler}
+              onKeyPress={onKeyPressHandler(() =>
+                addCommentHandler(commentInputValue, commentList)
+              )}
             />
-            <SendIconStyle onClick={addCommentHandler} />
+            <SendIconStyle
+              onClick={() => addCommentHandler(commentInputValue, commentList)}
+            />
           </FlexRowDiv>
         </FlexColumnDiv>
       )}
