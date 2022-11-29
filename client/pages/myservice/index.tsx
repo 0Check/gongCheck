@@ -7,7 +7,8 @@ import ChartExample from "../../src/components/atomic/organisms/chart";
 import { useRouter } from "next/dist/client/router";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import { getBoardList } from "../../src/api/getBoardList";
+import { getBoardList } from "../../src/api/myBoardApiService";
+import { v4 as uuidv4 } from "uuid";
 
 // const data = [
 //   { name: "1", title: "test1", who: "children1", content: "content1" },
@@ -25,6 +26,7 @@ export default function MyService() {
   const [data, setData] = useState<any[]>();
 
   const onClickCard = useCallback((e) => {
+    console.log("index.tsx : ", e.currentTarget.id);
     setRightSide(e.currentTarget.id);
     setContent("content");
   }, []);
@@ -37,10 +39,13 @@ export default function MyService() {
     router.push("/create");
   };
 
-  getBoardList(1).then((res) => {
-    return setData(res);
-  });
-  console.log(data);
+  useEffect(() => {
+    getBoardList(1).then((res) => {
+      console.log("index.tsx : ", res);
+      setData(res);
+    });
+  }, []);
+
   return (
     <>
       <SearchBox>
@@ -56,24 +61,20 @@ export default function MyService() {
       <TitleDevideLine />
       <Page>
         <LeftSide>
-          {data.map((el) => (
-            <LeftCard key={el.name} onClick={onClickCard} id={el.name}>
-              <CardTitle>{el.title}</CardTitle>
+          {data?.map((el) => (
+            <LeftCard key={uuidv4()} onClick={onClickCard} id={el.id}>
+              <CardTitle> {el.title}</CardTitle>
               <CardBox>
-                <CardSubTitle>{el.name}</CardSubTitle>
-                <CardContext>{el.content}</CardContext>
+                <CardSubTitle> 작성자 :</CardSubTitle>
+                <CardContext>{el.writer}</CardContext>
               </CardBox>
               <CardBox>
-                <CardSubTitle>{el.content}</CardSubTitle>
-                <CardContext>내용</CardContext>
+                <CardSubTitle> 지원 대상 :</CardSubTitle>
+                <CardContext>{el.target}</CardContext>
               </CardBox>
               <CardBox>
-                <CardSubTitle>댓글</CardSubTitle>
-                <div>
-                  <CardContext>댓글1</CardContext>
-                  <CardContext>댓글2</CardContext>
-                  <CardContext>댓글3</CardContext>
-                </div>
+                <CardSubTitle> 지원 내용 :</CardSubTitle>
+                <CardContext>{el.contents}</CardContext>
               </CardBox>
             </LeftCard>
           ))}
@@ -88,11 +89,11 @@ export default function MyService() {
               투표현황
             </GraphOption>
           </div>
-          {content == "content" ? (
+          {content === "content" ? (
             data
-              .filter((el) => el.name == rightSide)
-              .map((el) => (
-                <RightCard key={el.name}>
+              ?.filter((el: any) => el.id === rightSide)
+              .map((el: any) => (
+                <RightCard key={uuidv4()}>
                   <CardTitle>{el.title}</CardTitle>
                   <CardBox>
                     <CardSubTitle>제목</CardSubTitle>
@@ -100,13 +101,13 @@ export default function MyService() {
                   </CardBox>
                   <CardBox>
                     <CardSubTitle>지원대상</CardSubTitle>
-                    <CardContext>{el.who}</CardContext>
+                    <CardContext>{el.target}</CardContext>
                   </CardBox>
                   <CardBox>
                     <CardSubTitle>지원내용</CardSubTitle>
-                    <CardContext>{el.content}</CardContext>
+                    <CardContext>{el.contents}</CardContext>
                   </CardBox>
-                  <CommentContainer />
+                  <CommentContainer boardId={el.id} />
                 </RightCard>
               ))
           ) : (

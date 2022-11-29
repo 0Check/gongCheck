@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import { async } from "@firebase/util";
 import React, { useCallback, useState } from "react";
-import { createBoard } from "../../src/api/createBoard";
+import { createBoard } from "../../src/api/myBoardApiService";
 
 export default function CreateBoard() {
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
+  const [target, setTarget] = useState("");
 
   const changeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -18,12 +19,12 @@ export default function CreateBoard() {
     []
   );
 
-  const onClickSubmit = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      createBoard(title, contents);
-    },
-    [title, contents]
-  );
+  const onClickSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    createBoard(title, target, contents).then((res) => {
+      alert("글이 작성이 되었습니다.");
+    });
+  };
+
   return (
     <>
       <Head>공공서비스 제안하기</Head>
@@ -32,6 +33,11 @@ export default function CreateBoard() {
         <Title
           placeholder="공공서비스의 이름을 정해주세요"
           onChange={changeTitle}
+        />
+        <div>공공서비스 지원대상</div>
+        <Title
+          placeholder="공공서비스의 지원대상을 입력해주세요"
+          onChange={(e) => setTarget(e.target.value)}
         />
         <div>공공서비스 내용</div>
         <Content

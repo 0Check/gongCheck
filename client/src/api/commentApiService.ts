@@ -29,11 +29,11 @@ type commentListType = {
 // [Create] 댓글 추가하기
 export const addComment = async (
   commentInputValue: string,
-  commentList: Array<commentListType> | undefined
+  boardId: string
 ) => {
   if (commentInputValue === "") return;
   return addDoc(collection(firebaseDbService, "comment"), {
-    boardId: "아직 게시글ID가 없음",
+    boardId: boardId,
     writer: store.getState().authStore.displayName,
     content: commentInputValue,
     createdAt: serverTimestamp(),
@@ -47,11 +47,11 @@ export const addComment = async (
 };
 
 // [Read] 댓글 리스트 조회하기
-export const getCommentList = async () => {
+export const getCommentList = async (boardId: string) => {
   const q = query(
     collection(firebaseDbService, "comment"),
     orderBy("createdAt", "desc"),
-    where("boardId", "==", "아직 게시글ID가 없음")
+    where("boardId", "==", boardId)
   );
   return await getDocs(q)
     .then((result) => {
