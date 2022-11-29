@@ -187,6 +187,7 @@ export const voteBoard = async (boardID: string, vote: boolean) => {
         votedUser: votedUser,
       });
     }
+    alert("투표를 진행했습니다.");
   } else {
     alert("이미 투표를 했습니다.");
   }
