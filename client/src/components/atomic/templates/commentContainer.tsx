@@ -36,7 +36,7 @@ import { onKeyPressHandler } from "../../../commons/function/event/keyboardEvent
  */
 
 interface ICommentContainerTypes {
-  boardId?: string;
+  boardId: string;
 }
 
 type commentListType = {
@@ -56,12 +56,9 @@ const CommentContainer = (props: ICommentContainerTypes) => {
   const authStore = useSelector((state: RootState) => state.authStore);
 
   // [Create] 댓글 추가하기
-  const addCommentHandler = async (
-    commentInputValue: string,
-    commentList: Array<commentListType> | undefined
-  ) => {
+  const addCommentHandler = async (commentInputValue: string) => {
     if (commentInputValue !== undefined) {
-      addComment(commentInputValue, commentList)
+      addComment(commentInputValue, props.boardId)
         .then((result) => {
           setCommentInputValue("");
           getCommentListHandler();
@@ -74,7 +71,7 @@ const CommentContainer = (props: ICommentContainerTypes) => {
 
   // [Read] 댓글 리스트 조회하기
   const getCommentListHandler = async () => {
-    getCommentList()
+    getCommentList(props.boardId)
       .then(async (result) => {
         await setCommentList(
           result.docs.map((i) => {
@@ -151,11 +148,11 @@ const CommentContainer = (props: ICommentContainerTypes) => {
               }}
               value={commentInputValue}
               onKeyPress={onKeyPressHandler(() =>
-                addCommentHandler(commentInputValue, commentList)
+                addCommentHandler(commentInputValue)
               )}
             />
             <SendIconStyle
-              onClick={() => addCommentHandler(commentInputValue, commentList)}
+              onClick={() => addCommentHandler(commentInputValue)}
             />
           </FlexRowDiv>
         </FlexColumnDiv>

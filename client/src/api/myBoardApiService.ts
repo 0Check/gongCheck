@@ -30,6 +30,7 @@ export const createBoard = async (
     const docRef = await addDoc(collection(db, "board"), {
       title: title,
       target: target,
+      writer: store.getState().authStore.displayName,
       contents: contents,
       createdAt: today.toLocaleString(),
       agreeGender: [0, 0],
@@ -62,7 +63,13 @@ export const getBoardList = async (pageNum: number) => {
 
   return await getDocs(listDB)
     .then((result) => {
-      return Promise.resolve(result.docs.map((el) => el.data()));
+      return Promise.resolve(
+        result.docs.map((el) => {
+          const temp = el.data();
+          temp["id"] = el.id;
+          return temp;
+        })
+      );
     })
     .catch((err) => {
       return Promise.reject("Fail");
