@@ -40,11 +40,15 @@ export default function MyService() {
   };
 
   const onClickVoteTrue = (e: React.MouseEvent<HTMLDivElement>) => {
-    voteBoard(e.target.id, true)
+    if (e.target instanceof Element) {
+      voteBoard(e.target.id, true);
+    }
   }
 
   const onClickVoteFalse = (e: React.MouseEvent<HTMLDivElement>) => {
-    voteBoard(e.target.id, false)
+    if (e.target instanceof Element) {
+      voteBoard(e.target.id, false);
+    }
   }
 
   useEffect(() => {
