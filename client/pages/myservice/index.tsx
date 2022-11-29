@@ -7,7 +7,7 @@ import ChartExample from "../../src/components/atomic/organisms/chart";
 import { useRouter } from "next/dist/client/router";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import { getBoardList } from "../../src/api/myBoardApiService";
+import { getBoardList, voteBoard } from "../../src/api/myBoardApiService";
 import { v4 as uuidv4 } from "uuid";
 
 // const data = [
@@ -38,6 +38,14 @@ export default function MyService() {
   const onClickWrite = (e: React.MouseEvent<HTMLDivElement>) => {
     router.push("/create");
   };
+
+  const onClickVoteTrue = (e: React.MouseEvent<HTMLDivElement>) => {
+    voteBoard(e.target.id, true)
+  }
+
+  const onClickVoteFalse = (e: React.MouseEvent<HTMLDivElement>) => {
+    voteBoard(e.target.id, false)
+  }
 
   useEffect(() => {
     getBoardList(1).then((res) => {
@@ -89,10 +97,9 @@ export default function MyService() {
               투표현황
             </GraphOption>
           </div>
-          {content === "content" ? (
-            data
-              ?.filter((el: any) => el.id === rightSide)
-              .map((el: any) => (
+          {data?.filter((el: any) => el.id === rightSide)
+            .map((el: any) => (
+              content === "content" ? (
                 <RightCard key={uuidv4()}>
                   <CardTitle>{el.title}</CardTitle>
                   <CardBox>
@@ -109,35 +116,52 @@ export default function MyService() {
                   </CardBox>
                   <CommentContainer boardId={el.id} />
                 </RightCard>
-              ))
-          ) : (
-            <>
-              <ChartExample />
-              <VoteTitle>이 의견에 대해서 어떻게 생각하세요?</VoteTitle>
-              <IconBox>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  좋아요
-                  <ThumbUpIcon style={{ marginTop: "10px" }} />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  별로인거같아요
-                  <ThumbDownIcon style={{ marginTop: "10px" }} />
-                </div>
-              </IconBox>
-            </>
-          )}
+              ) : (
+                <>
+                  <ChartExample />
+                  <VoteTitle>이 의견에 대해서 어떻게 생각하세요?</VoteTitle>
+                  <IconBox>
+                    <div
+                      id={el.id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#A1D0F6",
+                        width: "110px",
+                        height: "60px",
+                        borderRadius: "10px",
+                        cursor: "pointer"
+                      }}
+                      onClick={onClickVoteTrue}
+                    >
+                      좋아요
+                      <ThumbUpIcon style={{ marginTop: "10px" }} />
+                    </div>
+                    <div
+                      id={el.id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#F6B6C1",
+                        width: "110px",
+                        height: "60px",
+                        borderRadius: "10px",
+                        cursor: "pointer"
+                      }}
+                      onClick={onClickVoteFalse}
+                    >
+                      별로인거같아요
+                      <ThumbDownIcon style={{ marginTop: "10px" }} />
+                    </div>
+                  </IconBox>
+                </>
+              )
+            ))
+          }
         </RightSide>
       </Page>
     </>
