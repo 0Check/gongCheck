@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import Card from "../molecules/card";
 
-
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -14,13 +13,13 @@ export const Wrapper = styled.div`
   }
 `;
 
-export default function Cards(){
-  return(
+export default function Cards() {
+  return (
     <Wrapper>
+      {/* <Card />
      <Card />
      <Card />
-     <Card />
-     <Card />
+     <Card /> */}
     </Wrapper>
-  )
+  );
 }
