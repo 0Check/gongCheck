@@ -33,10 +33,12 @@ export const createBoard = async (
       writer: store.getState().authStore.displayName,
       contents: contents,
       createdAt: today.toLocaleString(),
-      agreeGender: [0, 0],
-      oppositeGender: [0, 0],
-      agreeAge: [0, 0, 0, 0, 0, 0],
-      oppositeAge: [0, 0, 0, 0, 0, 0],
+      voteData: {
+        agreeGender: [0, 0],
+        oppositeGender: [0, 0],
+        agreeAge: [0, 0, 0, 0, 0, 0],
+        oppositeAge: [0, 0, 0, 0, 0, 0],
+      },
       user: store.getState().authStore.uid,
       votedUser: [],
     })
@@ -150,10 +152,10 @@ export const voteBoard = async (boardID: string, vote: boolean) => {
 
   let data: any = docSnap.data();
   let votedUser = data.votedUser;
-  let agreeGender = data.agreeGender;
-  let oppositeGender = data.oppositeGender;
-  let agreeAge = data.agreeAge;
-  let oppositeAge = data.oppositeAge;
+  let agreeGender = data.voteData.agreeGender;
+  let oppositeGender = data.voteData.oppositeGender;
+  let agreeAge = data.voteData.agreeAge;
+  let oppositeAge = data.voteData.oppositeAge;
 
   if (!votedUser.includes(user)) {
     votedUser.push(user);
@@ -168,8 +170,12 @@ export const voteBoard = async (boardID: string, vote: boolean) => {
       agreeAge[age - 1]++;
 
       await updateDoc(docRef, {
-        agreeGender: agreeGender,
-        agreeAge: agreeAge,
+        voteData: {
+          agreeGender: agreeGender,
+          agreeAge: agreeAge,
+          oppositeGender: oppositeGender,
+          oppositeAge: oppositeAge,
+        },
         votedUser: votedUser,
       });
     } else {
@@ -182,8 +188,12 @@ export const voteBoard = async (boardID: string, vote: boolean) => {
       oppositeAge[age - 1]++;
 
       await updateDoc(docRef, {
-        oppositeGender: oppositeGender,
-        oppositeAge: oppositeAge,
+        voteData: {
+          agreeGender: agreeGender,
+          agreeAge: agreeAge,
+          oppositeGender: oppositeGender,
+          oppositeAge: oppositeAge,
+        },
         votedUser: votedUser,
       });
     }

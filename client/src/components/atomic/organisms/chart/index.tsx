@@ -1,8 +1,9 @@
+import { PropaneSharp } from "@mui/icons-material";
 import Chart from "chart.js/auto";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 
-export default function ChartExample() {
+export default function ChartExample(props: any) {
   const canvasDom = useRef<any>(null);
   const testDom = useRef<any>(null);
 
@@ -14,20 +15,20 @@ export default function ChartExample() {
   useEffect(() => {
     const ctx = canvasDom.current?.getContext("2d");
     const itx = testDom.current?.getContext("2d");
-    console.log(ctx);
+    console.log(props.voteData)
 
     new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["10대", "20대", "30대", "40대"],
+        labels: ["10대", "20대", "30대", "40대", "50대", "60대",],
         datasets: [
           {
             label: "찬성",
-            data: [10, 20, 30, 40],
+            data: props.voteData.agreeAge
           },
           {
             label: "반대",
-            data: [60, 70, 50, 20],
+            data: props.voteData.oppositeAge
           },
         ],
       },
@@ -40,11 +41,11 @@ export default function ChartExample() {
         datasets: [
           {
             label: "찬성",
-            data: [45, 60],
+            data: props.voteData.agreeGender
           },
           {
             label: "반대",
-            data: [30, 20],
+            data: props.voteData.oppositeGender
           },
         ],
       },
